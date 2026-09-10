@@ -38,6 +38,10 @@ ldr: $(NAME)-$(VERSION).gb $(NAME)-$(VERSION).gbc
 clean:
 	$(RM) $(ldr_obj) $(wildcard $(NAME)-*.gb) $(wildcard $(NAME)-*.gbc) $(wildcard $(NAME)-*.map) $(wildcard $(NAME)-*.sym)
 
+# Header/font/memory includes aren't captured by the pattern rule below,
+# so list them explicitly to force a rebuild when they change.
+main.o: main.asm gbhw.inc ibmpc1.inc memory.asm
+
 %.o: %.asm
 	$(RGBDS_DIR)rgbasm $(RGBASM_FLAGS) -o $@ $<
 

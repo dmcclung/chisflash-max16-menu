@@ -8,21 +8,15 @@
 ;If all of these are already defined, don't do it again.
 
         IF      !DEF(MEMORY1_ASM)
-MEMORY1_ASM  SET  1
+DEF MEMORY1_ASM EQU 1
 
-rev_Check_memory1_asm: MACRO
-;NOTE: REVISION NUMBER CHANGES MUST BE ADDED
-;TO SECOND PARAMETER IN FOLLOWING LINE.
-        IF      \1 > 1.0      ; <---- NOTE!!! PUT FILE REVISION NUMBER HERE
-        WARN    "Version \1 or later of 'memory.asm' is required."
-        ENDC
-        ENDM
+; (legacy rev_Check_memory1_asm macro removed: unused under modern RGBDS)
 
         INCLUDE "gbhw.inc"
 
 ; Macro that pauses until VRAM available.
 
-lcd_WaitVRAM: MACRO
+MACRO lcd_WaitVRAM
         ld      a,[rSTAT]       ; <---+
         and     STATF_BUSY      ;     |
         jr      nz,@-4          ; ----+

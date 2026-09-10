@@ -28,17 +28,11 @@
 ; this is not a general purpose version!
 
         IF      !DEF(IBMPC1_INC)
-IBMPC1_INC  SET  1
+DEF IBMPC1_INC EQU 1
 
-rev_Check_ibmpc1_inc: MACRO
-;NOTE: REVISION NUMBER CHANGES MUST BE ADDED
-;TO SECOND PARAMETER IN FOLLOWING LINE.
-        IF      \1 > 1.3      ; <--- PUT REVISION NUMBER HERE
-        WARN    "Version \1 or later of 'ibmpc1.inc' is required."
-        ENDC
-        ENDM
+; (legacy rev_Check_ibmpc1_inc macro removed: unused under modern RGBDS)
 
-chr_IBMPC1: MACRO
+MACRO chr_IBMPC1
 
         IF      (\1 == 0) || (\2 == 0) || (\1 > \2) || (\2 > 8)
         FAIL    "Font range values are invalid"
