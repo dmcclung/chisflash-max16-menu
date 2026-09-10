@@ -427,22 +427,8 @@ build_row:
     ld    [hl+], a
     dec   b
     jr    nz, .ncopy
-    ; type flag from CGB byte $4143
-    ld    a, [$4143]
-    cp    $80
-    jr    z, .compat
-    cp    $c0
-    jr    z, .coloronly
-    ld    a, $4d                    ; 'M'  mono only
-    ld    [hl], a
-    ret
-.compat:
-    ld    a, $2b                    ; '+'  DMG + CGB
-    ld    [hl], a
-    ret
-.coloronly:
-    ld    a, $43                    ; 'C'  CGB only
-    ld    [hl], a
+    ld    a, $20
+    ld    [hl], a                   ; col 19: blank
     ret
 
 ; refresh_arrow - redraw the selection-arrow column (col 0) for all rows
