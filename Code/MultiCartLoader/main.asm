@@ -210,9 +210,9 @@ begin:
 ; ****************************************************************************************
 Title:
     DB    $cd, $cd, $cd, $cd
-    DB    "Game on Cart"
-    DB    $cd, $cd, $cd, $cd
-TitleEnd:
+    DB    " Game List "
+    DB    $cd, $cd, $cd, $cd, $cd
+TitleEnd:      ; must total 20 bytes (one screen row)
 
 EmptyName:
     DB    " --- EMPTY --- "   ; exactly 15 chars
