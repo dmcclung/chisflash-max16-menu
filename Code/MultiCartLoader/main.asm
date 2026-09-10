@@ -91,10 +91,6 @@ begin:
     ld    de, _SCRN0+(SCRN_VX_B*0) ;
     ld    bc, TitleEnd-Title
     call  mem_CopyVRAM
-    ld    hl, Foot
-    ld    de, _SCRN0+(SCRN_VX_B*17) ;
-    ld    bc, FootEnd-Foot
-    call  mem_CopyVRAM
 
     ; ------------------------------------------------------------------
     ; draw all 16 game rows (LCD still off here -> fast VRAM writes)
@@ -217,12 +213,6 @@ Title:
     DB    "Game on Cart"
     DB    $cd, $cd, $cd, $cd
 TitleEnd:
-
-Foot:
-    DB    $cd, $cd, $cd, $cd, $cd
-    DB    "zephray.me"
-    DB    $cd, $cd, $cd, $cd, $cd
-FootEnd:
 
 EmptyName:
     DB    " --- EMPTY --- "   ; exactly 15 chars
