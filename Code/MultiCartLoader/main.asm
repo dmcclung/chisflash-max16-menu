@@ -250,51 +250,32 @@ begin:
     jr    .wait
 
 .enter
-    ; prepare to die
-    ; it is probably better to re-run the boot-rom, but we are unable to do so
-    
-    ; turn off lcd and reinitialize the vram
+    ; ChisFlash MBC5 multicart game-launch sequence (see CPLD Verilog).
+    ;
+    ; Register map (writes snooped by the CPLD regardless of RAM enable):
+    ;   $4000 D6=1 ......... arm multicart mode  (ram_bank[6] <- 1)
+    ;   $B000 D3..0 = N .... game_sel <- N        (gated on ram_bank[6]==1)
+    ;   $A000 D0=1 ......... game_sel_en <- 1     (gated on ram_bank[6]==1)
+    ;   $4000 (any) ....... rst_clk: CPLD pulses /RST ~10ms, console reboots
+    ;
+    ; Once game_sel_en flips to 1 the menu ROM is unmapped from $0000-$7FFF,
+    ; so the tail of the sequence has to execute from HRAM.
+    di
     call  StopLCD
-    ld    a, 0
-    ld    hl, $9fff
-.clear_vram_loop
-    ld    [hl-], a
-    bit   7, h
-    jr    nz, .clear_vram_loop
 
-.direct
-
-    ; restore mbc rom bank settings
-    ld    hl, $2000
-    ld    [hl], $01
-    ld    hl, $3000
-    ld    [hl], $00
-
-    ; set game select register
-    ld    hl, $4000
-    ld    [hl], $10
-    ld    hl, $b000
-    ld    [hl], c
-    ; copy the jump routine to internal ram
-    ld    hl, Ldr_start
+    ; copy the trampoline to HRAM ($FF80).  Done inline (not mem_Copy) so
+    ; that C, which carries the selected game index, is preserved.
+    ld    hl, GameStart
     ld    de, $ff80
-    ld    bc, Ldr_end - Ldr_start
-    call  mem_Copy
+    ld    b,  GameStartEnd - GameStart
+.copy_trampoline
+    ld    a, [hl+]
+    ld    [de], a
+    inc   de
+    dec   b
+    jr    nz, .copy_trampoline
 
-    ; turn on lcd
-    ld    a, $91
-    ld    [$ff40], a
-
-    ; restore register values
-    pop   bc
-    pop   de
-    pop   af
-    ;ld    bc, $0013
-    ;ld    de, $00d8
-    ld    hl, $a000      ; this is not default value, this is for mulitcart mode en
-    
-    ; jump to internal ram
-    jp    $ff80
+    jp    $ff80          ; C = game index (0..15)
 
 ; ****************************************************************************************
 ; hard-coded data
@@ -340,18 +321,21 @@ BankLUT:
     DB    $80, $01
 BankLUTEnd:
 
-Ldr_start:
-    ; enable multicart mode
-    ld    [hl], $01
-    ; restore mbc ram bank settings
-    ld    hl, $4000
-    ld    [hl], $00
-    ;ld    hl, $014d
-    pop   hl
-    ld    sp, $fffe
-    ;ei
-    jp    $100
-Ldr_end:
+; Trampoline executed from HRAM ($FF80).  C = selected game index.
+; After the $A000 write the menu ROM is gone; the CPLD resets the console
+; a few instructions later, so this never returns.
+GameStart:
+    ld    a, $40
+    ld    [$4000], a    ; arm multicart mode (ram_bank[6] = 1)
+    ld    a, c
+    ld    [$b000], a    ; game_sel = C
+    ld    a, $01
+    ld    [$a000], a    ; game_sel_en = 1   -- menu ROM unmaps here
+    xor   a
+    ld    [$4000], a    ; trigger CPLD reset pulse -> reboot into game C
+.wait_reset
+    jr    .wait_reset
+GameStartEnd:
 
 ; StopLCD:
 ; turn off LCD if it is on
