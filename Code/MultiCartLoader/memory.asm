@@ -17,9 +17,10 @@ DEF MEMORY1_ASM EQU 1
 ; Macro that pauses until VRAM available.
 
 MACRO lcd_WaitVRAM
-        ld      a,[rSTAT]       ; <---+
-        and     STATF_BUSY      ;     |
-        jr      nz,@-4          ; ----+
+.wait\@
+        ldh     a,[rSTAT]       ; must be ldh: modern RGBDS assembles a bare
+        and     STATF_BUSY      ; `ld a,[$FF41]` as the 3-byte form, which
+        jr      nz,.wait\@      ; broke the old hand-counted `jr nz,@-4`
         ENDM
 
         PUSHS           ; Push the current section onto assember stack.
