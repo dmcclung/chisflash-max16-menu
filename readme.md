@@ -31,6 +31,39 @@ make
 
 produces `multicartldr-0.9.gb` and `multicartldr-0.9.gbc`.
 
+# Tools
+
+**`chismax_build.py`** — packs the menu ROM and up to 16 game ROMs into the full
+32 MiB flash image this cart expects, laid out to match the CPLD's slot map
+(1 MiB menu, 1 MiB for game 1, 2 MiB each for games 2-16). Refuses to build if
+any ROM overflows its slot.
+
+```
+python3 chismax_build.py multicartldr-0.9.gbc game1.gb game2.gb ... -o chismax_32m.gbc
+```
+
+**`mbc5_patch.py`** — this cart's CPLD only implements MBC5 banking, so a game
+using a different mapper (MBC1) needs its bank-switching code
+rewritten to MBC5 before it will run here. This applies one of
+[Lesserkuma](https://github.com/Lesserkuma)'s BPS patches (looked up by source-ROM
+CRC32) to do that conversion for a single ROM.
+
+```
+python3 mbc5_patch.py game.gb                    # look up only, no changes written
+python3 mbc5_patch.py game.gb -o game_mbc5.gb    # apply the patch
+```
+
+It needs the patch database, `mapper_patches_b64.js`, which is **not bundled in
+this repo** — download it from Lesserkuma's
+[GBMem-Menu_256M](https://github.com/Lesserkuma/GBMem-Menu_256M) project
+([`res/mapper_patches_b64.js`](https://github.com/Lesserkuma/GBMem-Menu_256M/blob/main/res/mapper_patches_b64.js)):
+
+```
+curl -O https://raw.githubusercontent.com/Lesserkuma/GBMem-Menu_256M/main/res/mapper_patches_b64.js
+```
+
+and place it alongside the script (or pass `--patches <path>`).
+
 # Acknowledgements
 
 This started as a fork of **[NekoCart-GB](https://ncgb.zephray.me)** by Wenting Zhang
@@ -49,6 +82,13 @@ banking, game selection, and the reset sequence used to boot into a selected
 game) was reverse-engineered from that cart's own CPLD design. ChisFlash is an
 independent third-party hardware product; this repository is not affiliated
 with, endorsed by, or officially supported by its maker.
+
+`mbc5_patch.py`'s mapper-conversion patches come from
+[Lesserkuma](https://github.com/Lesserkuma)'s
+[GBMem-Menu_256M](https://github.com/Lesserkuma/GBMem-Menu_256M) project — see
+the **Tools** section above. That patch database is fetched separately and is
+not redistributed in this repository; see the upstream project for its own
+license terms.
 
 # License
 
