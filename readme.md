@@ -17,7 +17,7 @@ Written in RGBDS assembly; builds to a plain 32 KB `.gb`/`.gbc` ROM.
 * 16-game menu, one line per slot, no scrolling — arrow-key navigation with wrap-around
 * Game names read live from each flashed ROM's header; empty slots are marked
 * Auto-boot the last played game on power-on, with a ~3s on-screen countdown;
-  any button cancels, holding **Select** at boot skips it entirely
+  any button cancels, holding **Select** at boot skips the countdown entirely
 * Menu remembers the last-highlighted slot across power cycles (uses the cart's
   battery-backed SRAM)
 * Game launch and slot selection go through the ChisFlash CPLD's own registers —
