@@ -1,9 +1,0 @@
-# RGBDS build outputs
-*.o
-*.gb
-*.gbc
-*.map
-*.sym
-
-# Emulator save files
-*.sav

@@ -1,6 +1,12 @@
-Hardware/History/
-Hardware/Project Logs for NekoCart/
-Hardware/__Previews/
+# RGBDS build outputs
+*.o
+*.gb
+*.gbc
+*.map
+*.sym
+
+# Emulator save files
+*.sav
 
 # Windows image file caches
 Thumbs.db
@@ -49,7 +55,3 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
-*.SchDocPreview
-*.wsdt
-*.dbgdt
-*.dnx
