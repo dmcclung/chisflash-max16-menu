@@ -12,6 +12,8 @@ Written in RGBDS assembly; builds to a plain 32 KB `.gb`/`.gbc` ROM.
 
 # Features
 
+<img src="img/menu-screenshot.png" width="320" alt="ChisFlash Menu game list, showing 16 slots with arrow-key selection">
+
 * 16-game menu, one line per slot, no scrolling — arrow-key navigation with wrap-around
 * Game names read live from each flashed ROM's header; empty slots are marked
 * Auto-boot the last played game on power-on, with a ~3s on-screen countdown;
