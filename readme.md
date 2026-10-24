@@ -66,6 +66,22 @@ curl -O https://raw.githubusercontent.com/Lesserkuma/GBMem-Menu_256M/main/res/ma
 
 and place it alongside the script (or pass `--patches <path>`).
 
+**`picross_savefix.py`** — makes the MBC5-patched *Mario's Picross* keep its save
+on this cart. The cart has no power-fail protection on its SRAM, and Picross
+leaves SRAM enabled the whole time it runs, so switching the console off can
+corrupt both of its checksummed save copies and the game wipes the save on the
+next boot. This patch moves the backup copy into SRAM bank 1 (inside the slot's
+32 KB save area), which is only mapped while the game saves or validates its
+save, so a corrupted primary copy is restored from it on boot. Input must be
+the output of `mbc5_patch.py`.
+
+```
+python3 mbc5_patch.py mario_picross.gb -o mario_picross_mbc5.gb
+python3 picross_savefix.py mario_picross_mbc5.gb -o mario_picross_savefix.gb
+```
+
+Any existing Picross save is in the old layout and will be reset once.
+
 # Acknowledgements
 
 This started as a fork of **[NekoCart-GB](https://ncgb.zephray.me)** by Wenting Zhang
